@@ -148,6 +148,10 @@ var _ = {};
   // Calls the method named by functionOrKey on each value in the list.
   // Note: you will nead to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+    var value = Array.prototype.slice.call(arguments, 2);
+    return _.map(collection, function(value) {
+      return (typeof functionOrKey === 'function' ? functionOrKey : value[functionOrKey]).apply(value, args);
+    });
   };
 
   // Reduces an array or object to a single value by repetitively calling
@@ -175,12 +179,16 @@ var _ = {};
   _.contains = function(collection, target) {
     // TIP: Many iteration problems can be most easily expressed in
     // terms of reduce(). Here's a freebie to demonstrate!
-    return _.reduce(collection, function(wasFound, item) {
-      if (wasFound) {
-        return true;
+    if (Array.isArray(collection)) {
+      return _.reduce(collection, function(wasFound, item) {
+        return (wasFound === target) || item;
+      }, false);
+    } else {
+      for (var key in collection) {
+        if (collection[key] === target) return true;
       }
-      return item === target;
-    }, false);
+      return false;
+    }
   };
 
 
